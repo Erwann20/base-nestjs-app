@@ -1,0 +1,9 @@
+#!/bin/bash
+
+prjName="nestBaseApp"
+dcFile="docker/docker-compose-dev.yml"
+
+
+set -x
+docker-compose -f ${dcFile} -p ${prjName} down
+exit $?

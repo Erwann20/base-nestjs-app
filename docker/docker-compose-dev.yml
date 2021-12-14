@@ -1,0 +1,52 @@
+version: '3.4'
+
+services:
+  nest:
+    image: node:12.18
+    restart: always
+    volumes:
+      - ../api:/var/www/api
+    working_dir: /var/www/api
+    ports:
+      - 5000:5000
+    env_file:
+      - environment/dev/database.env
+    links:
+      - database
+    networks:
+      nest-base:
+        aliases:
+          - nest
+    command: bash -c "npm install && npm run start:dev"
+
+  database:
+    image: mysql:8.0.27
+    restart: always
+    ports:
+      - 3306:3306
+    env_file:
+      - environment/dev/database.env
+    volumes:
+      - ~/database/nest:/var/lib/mysql
+    networks:
+      nest-base:
+        aliases:
+          - database
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.0.2
+    env_file:
+      - environment/dev/phpmyadmin.env
+    volumes:
+      - /sessions
+    networks:
+      nest-base:
+        aliases:
+          - phpmyadmin
+    ports:
+      - 127.0.0.1:8888:80
+    restart: always
+
+
+networks:
+  nest-base:
